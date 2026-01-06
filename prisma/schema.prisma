@@ -1,0 +1,473 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Business {
+  id                String   @id @default(cuid())
+  name              String
+  businessHours     String?  // JSON string: {"monday": {"open": "09:00", "close": "17:00"}, ...}
+  services          String?  // JSON array or comma-separated
+  pricingNotes      String?
+  escalationPhone   String?
+  escalationEmail   String?
+  tone              String   @default("friendly, professional, concise")
+  calendlyApiKey    String?  // Calendly API key
+  calendlyUserUri   String?  // Calendly user URI (e.g., https://api.calendly.com/users/...)
+  calendlyEventType String?  // Default event type URI
+  calendlyLink      String?  // Public Calendly link (e.g., https://calendly.com/username/event)
+  timezone          String?  @default("America/New_York") // Business timezone
+  
+  // AI Persona Customization
+  aiPersonaName     String?  @default("Assistant") // Custom AI name
+  aiPersonaVoice    String?  // Voice style: "professional", "friendly", "casual", "formal"
+  aiPersonaTone     String?  // Override default tone
+  
+  // Web Search & Intelligence
+  enableWebSearch   Boolean  @default(false) // Enable real-time web search
+  webSearchProvider String?  @default("openai") // "openai" or "tavily" or "serp"
+  
+  // CRM Integrations
+  crmProvider       String?  // "hubspot", "salesforce", "pipedrive", null
+  crmApiKey         String?
+  crmApiUrl         String?
+  crmAccountId      String?
+  autoSyncToCrm     Boolean  @default(false)
+  
+  // Task Management
+  taskProvider      String?  // "notion", "asana", "trello", null
+  taskApiKey        String?
+  taskWorkspaceId   String?
+  autoCreateTasks   Boolean  @default(false)
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  conversations     Conversation[]
+}
+
+model Contact {
+  id        String   @id @default(cuid())
+  phone     String?
+  email     String?
+  name      String?
+  // Cross-channel memory
+  preferences     String?  // JSON: {"language": "en", "preferredChannel": "SMS", ...}
+  lastInteraction DateTime?
+  totalInteractions Int    @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  conversations Conversation[]
+  feedback      Feedback[]
+  scheduledMessages ScheduledMessage[]
+  
+  @@index([phone])
+  @@index([email])
+}
+
+model Conversation {
+  id          String      @id @default(cuid())
+  channel     ConversationChannel
+  status      ConversationStatus @default(OPEN)
+  contactId   String
+  businessId  String
+  summary     String?
+  language    String?     @default("en") // ISO 639-1 language code (en, es, fr, etc.)
+  
+  // AI Summarization
+  aiSummary   String?     // AI-generated summary
+  summaryGeneratedAt DateTime?
+  
+  // Sentiment & Emotion
+  sentiment   SentimentScore?
+  emotion     String?     // "happy", "frustrated", "neutral", "angry", "satisfied"
+  sentimentScore Float?   // -1 to 1 scale
+  
+  // Analytics
+  resolutionTime Int?     // Minutes to resolve
+  messageCount    Int      @default(0)
+  escalationReason String?
+  
+  // Revenue tracking
+  leadGenerated Boolean   @default(false)
+  saleGenerated Boolean   @default(false)
+  revenueAmount Float?
+  
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  contact     Contact     @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  business    Business    @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  messages    Message[]
+  escalations Escalation[]
+  meetingNotes MeetingNote[]
+  tasks       Task[]
+  
+  @@index([contactId])
+  @@index([businessId])
+  @@index([status])
+  @@index([channel])
+  @@index([sentimentScore])
+  @@index([createdAt])
+}
+
+enum SentimentScore {
+  VERY_NEGATIVE
+  NEGATIVE
+  NEUTRAL
+  POSITIVE
+  VERY_POSITIVE
+}
+
+enum ConversationChannel {
+  VOICE
+  SMS
+  EMAIL
+}
+
+enum ConversationStatus {
+  OPEN
+  RESOLVED
+  ESCALATED
+}
+
+model Message {
+  id             String   @id @default(cuid())
+  conversationId String
+  role           MessageRole
+  content        String
+  metadata       String?  // JSON string for additional data
+  
+  // Web search results
+  webSearchUsed  Boolean  @default(false)
+  webSearchResults String? // JSON array of search results
+  
+  // Sentiment for this message
+  sentiment      Float?   // -1 to 1
+  emotion        String?
+  
+  // Predictive suggestions
+  suggestionType String?  // "upsell", "follow-up", "support", null
+  
+  createdAt      DateTime @default(now())
+  
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  
+  @@index([conversationId])
+  @@index([createdAt])
+  @@index([sentiment])
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
+  SYSTEM
+}
+
+model KnowledgeBaseItem {
+  id        String              @id @default(cuid())
+  type      KnowledgeBaseType
+  title     String
+  question  String?  // For FAQ type
+  answer    String?  // For FAQ type
+  content   String?  // For DOC type (longform)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([type])
+}
+
+enum KnowledgeBaseType {
+  FAQ
+  DOC
+}
+
+model Escalation {
+  id             String   @id @default(cuid())
+  conversationId String
+  reason         String
+  notifiedAt     DateTime?
+  createdAt      DateTime @default(now())
+  
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  
+  @@index([conversationId])
+}
+
+model CopilotSession {
+  id              String   @id @default(cuid())
+  userId          String
+  mode            CopilotMode @default(AUTO)
+  status          CopilotSessionStatus @default(ACTIVE)
+  title           String?
+  screenContext   String?  // JSON string with screen info
+  startedAt       DateTime @default(now())
+  endedAt         DateTime?
+  summary         String?
+  actionItems     String?  // JSON array
+  followUpEmail   String?
+  
+  transcripts     CopilotTranscript[]
+  suggestions     CopilotSuggestion[]
+  
+  @@index([userId])
+  @@index([status])
+  @@index([startedAt])
+}
+
+enum CopilotMode {
+  SALES
+  SUPPORT
+  MEETING
+  AUTO
+}
+
+enum CopilotSessionStatus {
+  ACTIVE
+  ENDED
+  PAUSED
+}
+
+model CopilotTranscript {
+  id          String   @id @default(cuid())
+  sessionId   String
+  speaker     String?  // "user" or "other" or null
+  text        String
+  timestamp  DateTime @default(now())
+  confidence  Float?
+  
+  session     CopilotSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  
+  @@index([sessionId])
+  @@index([timestamp])
+}
+
+model CopilotSuggestion {
+  id          String   @id @default(cuid())
+  sessionId   String
+  type        SuggestionType
+  content     String
+  confidence  Float?
+  timestamp   DateTime @default(now())
+  viewed      Boolean  @default(false)
+  
+  session     CopilotSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  
+  @@index([sessionId])
+  @@index([timestamp])
+  @@index([type])
+}
+
+enum SuggestionType {
+  SUGGESTED_RESPONSE
+  TALKING_POINT
+  OBJECTION_DETECTED
+  CLARIFYING_QUESTION
+  NEXT_STEP
+  SUMMARY
+}
+
+// New models for advanced features
+
+model MeetingNote {
+  id             String   @id @default(cuid())
+  conversationId String
+  title          String
+  content        String   // Structured meeting notes
+  actionItems    String?  // JSON array
+  attendees      String?  // JSON array
+  duration       Int?     // Minutes
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  
+  @@index([conversationId])
+}
+
+model Task {
+  id             String   @id @default(cuid())
+  conversationId String?
+  title          String
+  description    String?
+  status         TaskStatus @default(PENDING)
+  priority       TaskPriority @default(MEDIUM)
+  dueDate        DateTime?
+  
+  // External task management
+  externalTaskId String?  // ID in Notion/Asana/Trello
+  externalProvider String? // "notion", "asana", "trello"
+  
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  completedAt    DateTime?
+  
+  conversation   Conversation? @relation(fields: [conversationId], references: [id], onDelete: SetNull)
+  
+  @@index([conversationId])
+  @@index([status])
+  @@index([dueDate])
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+model ScheduledMessage {
+  id          String   @id @default(cuid())
+  contactId   String
+  channel     ConversationChannel
+  content     String
+  scheduledFor DateTime
+  sent        Boolean  @default(false)
+  sentAt      DateTime?
+  createdAt   DateTime @default(now())
+  
+  contact     Contact  @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  
+  @@index([contactId])
+  @@index([scheduledFor])
+  @@index([sent])
+}
+
+model Feedback {
+  id          String   @id @default(cuid())
+  contactId   String?
+  conversationId String?
+  messageId   String?
+  rating      Int      // 1-5 stars
+  comment     String?
+  helpful     Boolean?
+  createdAt   DateTime @default(now())
+  
+  contact     Contact? @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  
+  @@index([contactId])
+  @@index([conversationId])
+  @@index([rating])
+}
+
+model TrendAnalysis {
+  id          String   @id @default(cuid())
+  type        TrendType
+  period      String   // "daily", "weekly", "monthly"
+  periodStart DateTime
+  periodEnd   DateTime
+  data        String   // JSON: {"question": count, ...}
+  insights    String?  // AI-generated insights
+  createdAt   DateTime @default(now())
+  
+  @@index([type])
+  @@index([periodStart])
+}
+
+enum TrendType {
+  COMMON_QUESTIONS
+  PAIN_POINTS
+  POPULAR_SERVICES
+  ESCALATION_REASONS
+  SENTIMENT_TRENDS
+}
+
+model PerformanceBenchmark {
+  id              String   @id @default(cuid())
+  period          String   // "daily", "weekly", "monthly"
+  periodStart     DateTime
+  periodEnd       DateTime
+  
+  // AI Metrics
+  aiResponseCount     Int
+  aiAvgResponseTime   Float   // Seconds
+  aiResolutionRate    Float   // Percentage
+  aiEscalationRate    Float   // Percentage
+  
+  // Human Metrics (if available)
+  humanResponseCount  Int?
+  humanAvgResponseTime Float?
+  humanResolutionRate  Float?
+  humanEscalationRate  Float?
+  
+  // Comparison
+  aiVsHumanResolution  Float?  // Difference percentage
+  aiVsHumanSpeed       Float?  // Speed difference
+  
+  createdAt       DateTime @default(now())
+  
+  @@index([periodStart])
+}
+
+model RevenueImpact {
+  id          String   @id @default(cuid())
+  period      String   // "daily", "weekly", "monthly"
+  periodStart DateTime
+  periodEnd   DateTime
+  
+  // Lead Generation
+  leadsGenerated    Int
+  leadsFromVoice    Int
+  leadsFromSMS      Int
+  leadsFromEmail    Int
+  
+  // Sales
+  salesGenerated    Int
+  revenueAmount     Float
+  avgDealSize       Float
+  
+  // Conversion
+  conversationToLeadRate Float
+  leadToSaleRate         Float
+  
+  createdAt   DateTime @default(now())
+  
+  @@index([periodStart])
+}
+
+model CrmSync {
+  id          String   @id @default(cuid())
+  conversationId String?
+  contactId   String?
+  crmProvider String   // "hubspot", "salesforce", "pipedrive"
+  crmRecordId String   // ID in external CRM
+  recordType  String   // "contact", "deal", "task", "note"
+  syncedAt    DateTime @default(now())
+  syncStatus  SyncStatus @default(SUCCESS)
+  errorMessage String?
+  
+  @@index([conversationId])
+  @@index([contactId])
+  @@index([crmProvider])
+}
+
+enum SyncStatus {
+  SUCCESS
+  FAILED
+  PENDING
+}
+
