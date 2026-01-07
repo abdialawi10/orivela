@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
 
     // Gather speech input
     const gather = response.gather({
-      input: 'speech',
+      input: ['speech'],
       action: '/api/twilio/voice/gather',
       method: 'POST',
       speechTimeout: 'auto',

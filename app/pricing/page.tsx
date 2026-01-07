@@ -349,7 +349,7 @@ export default function PricingPage() {
             <div>
               <h3 className="font-semibold mb-2">What happens after my free trial?</h3>
               <p className="text-gray-600 text-sm">
-                After your 14-day free trial, you'll be automatically charged based on your selected plan. You can cancel anytime before the trial ends.
+                After your 14-day free trial, you&apos;ll be automatically charged based on your selected plan. You can cancel anytime before the trial ends.
               </p>
             </div>
             <div>

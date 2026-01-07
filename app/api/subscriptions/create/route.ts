@@ -83,12 +83,6 @@ export async function POST(req: NextRequest) {
         },
       })
 
-      // Update business with subscription
-      await prisma.business.update({
-        where: { id: business.id },
-        data: { subscriptionId: subscription.id },
-      })
-
       return NextResponse.json({
         subscription,
         message: 'Trial started successfully',

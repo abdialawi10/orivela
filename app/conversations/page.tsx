@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import DashboardLayout from '@/components/dashboard/layout'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -27,11 +27,7 @@ export default function ConversationsPage() {
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<'ALL' | 'VOICE' | 'SMS' | 'EMAIL'>('ALL')
 
-  useEffect(() => {
-    fetchConversations()
-  }, [filter])
-
-  const fetchConversations = async () => {
+  const fetchConversations = useCallback(async () => {
     try {
       const params = new URLSearchParams()
       if (filter !== 'ALL') {
@@ -47,7 +43,11 @@ export default function ConversationsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [filter])
+
+  useEffect(() => {
+    fetchConversations()
+  }, [fetchConversations])
 
   const getChannelIcon = (channel: string) => {
     switch (channel) {

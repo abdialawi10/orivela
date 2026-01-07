@@ -57,7 +57,7 @@ export default function ContactPage() {
             Get in Touch
           </h1>
           <p className="text-xl text-gray-600">
-            Have questions? We'd love to hear from you.
+            Have questions? We&apos;d love to hear from you.
           </p>
         </div>
       </section>
@@ -115,7 +115,7 @@ export default function ContactPage() {
               {submitted ? (
                 <div className="bg-green-50 border border-green-200 rounded-lg p-6 text-center">
                   <p className="text-green-800 font-semibold mb-2">Message sent successfully!</p>
-                  <p className="text-green-600 text-sm">We'll get back to you within 24 hours.</p>
+                  <p className="text-green-600 text-sm">We&apos;ll get back to you within 24 hours.</p>
                   <Button 
                     onClick={() => setSubmitted(false)} 
                     variant="outline" 

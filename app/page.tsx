@@ -175,7 +175,7 @@ export default async function Home() {
               </div>
               <h3 className="text-xl font-semibold mb-2">Sign Up & Configure</h3>
               <p className="text-gray-600">
-                Create your account, add your business information, and configure your AI assistant's tone and knowledge base.
+                Create your account, add your business information, and configure your AI assistant&apos;s tone and knowledge base.
               </p>
             </div>
 

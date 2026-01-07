@@ -42,15 +42,19 @@ export async function syncContactToCrm(
 
     let crmRecordId: string | null = null
 
+    // TypeScript narrowing: we already checked crmApiKey is not null
+    const apiKey = business.crmApiKey!
+    const apiUrl = business.crmApiUrl || undefined
+    
     switch (business.crmProvider) {
       case 'hubspot':
-        crmRecordId = await syncToHubSpot(contact, business.crmApiKey)
+        crmRecordId = await syncToHubSpot(contact, apiKey)
         break
       case 'salesforce':
-        crmRecordId = await syncToSalesforce(contact, business.crmApiKey, business.crmApiUrl)
+        crmRecordId = await syncToSalesforce(contact, apiKey, apiUrl)
         break
       case 'pipedrive':
-        crmRecordId = await syncToPipedrive(contact, business.crmApiKey)
+        crmRecordId = await syncToPipedrive(contact, apiKey)
         break
     }
 
@@ -103,34 +107,46 @@ export async function syncConversationToCrm(
 
     switch (business.crmProvider) {
       case 'hubspot':
+        const apiKey = business.crmApiKey!
+        const apiUrl = business.crmApiUrl || undefined
+        
+        const contactId = conversation.contact.email || conversation.contact.phone || undefined
+        
         crmRecordId = await createHubSpotDeal(
           {
             name: deal?.name || `Conversation ${conversationId}`,
             amount: deal?.amount,
-            contactId: conversation.contact.email || conversation.contact.phone,
+            contactId,
           },
-          business.crmApiKey
+          apiKey
         )
         break
       case 'salesforce':
+        const salesforceApiKey = business.crmApiKey!
+        const salesforceApiUrl = business.crmApiUrl || undefined
+        const salesforceContactId = conversation.contact.email || conversation.contact.phone || undefined
+        
         crmRecordId = await createSalesforceOpportunity(
           {
             name: deal?.name || `Conversation ${conversationId}`,
             amount: deal?.amount,
-            contactId: conversation.contact.email || conversation.contact.phone,
+            contactId: salesforceContactId,
           },
-          business.crmApiKey,
-          business.crmApiUrl
+          salesforceApiKey,
+          salesforceApiUrl
         )
         break
       case 'pipedrive':
+        const pipedriveApiKey = business.crmApiKey!
+        const pipedriveContactId = conversation.contact.email || conversation.contact.phone || undefined
+        
         crmRecordId = await createPipedriveDeal(
           {
             name: deal?.name || `Conversation ${conversationId}`,
             amount: deal?.amount,
-            contactId: conversation.contact.email || conversation.contact.phone,
+            contactId: pipedriveContactId,
           },
-          business.crmApiKey
+          pipedriveApiKey
         )
         break
     }

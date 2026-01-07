@@ -124,7 +124,7 @@ export default function HelpCenterPage() {
               <div className="flex-1">
                 <h2 className="text-2xl font-bold mb-2">Still need help?</h2>
                 <p className="text-gray-600 mb-4">
-                  Can't find what you're looking for? Our support team is here to help you 24/7.
+                  Can&apos;t find what you&apos;re looking for? Our support team is here to help you 24/7.
                 </p>
                 <div className="flex gap-4">
                   <Link href="/contact">

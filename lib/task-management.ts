@@ -38,15 +38,19 @@ export async function createExternalTask(
 
     let externalTaskId: string | null = null
 
+    // TypeScript narrowing: we already checked taskApiKey is not null
+    const taskApiKey = business.taskApiKey!
+    const taskWorkspaceId = business.taskWorkspaceId || undefined
+    
     switch (business.taskProvider) {
       case 'notion':
-        externalTaskId = await createNotionTask(task, business.taskApiKey, business.taskWorkspaceId)
+        externalTaskId = await createNotionTask(task, taskApiKey, taskWorkspaceId)
         break
       case 'asana':
-        externalTaskId = await createAsanaTask(task, business.taskApiKey, business.taskWorkspaceId)
+        externalTaskId = await createAsanaTask(task, taskApiKey, taskWorkspaceId)
         break
       case 'trello':
-        externalTaskId = await createTrelloTask(task, business.taskApiKey, business.taskWorkspaceId)
+        externalTaskId = await createTrelloTask(task, taskApiKey, taskWorkspaceId)
         break
     }
 

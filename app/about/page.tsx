@@ -29,7 +29,7 @@ export default function AboutPage() {
             About {brandFullName}
           </h1>
           <p className="text-xl text-gray-600">
-            We're building the future of customer communication
+            We&apos;re building the future of customer communication
           </p>
         </div>
       </section>
@@ -80,7 +80,7 @@ export default function AboutPage() {
                 <div>
                   <h3 className="text-xl font-semibold mb-2">Accessibility</h3>
                   <p className="text-gray-600">
-                    Great customer service shouldn't be expensive or complicated. We make it accessible to everyone.
+                    Great customer service shouldn&apos;t be expensive or complicated. We make it accessible to everyone.
                   </p>
                 </div>
               </div>
@@ -105,7 +105,7 @@ export default function AboutPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold mb-4">Join Our Journey</h2>
           <p className="text-gray-600 mb-8">
-            We're always looking for talented people who share our vision. Check out our careers page or reach out to learn more.
+            We&apos;re always looking for talented people who share our vision. Check out our careers page or reach out to learn more.
           </p>
           <div className="flex gap-4 justify-center">
             <Link href="/contact">

@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
       const response = new VoiceResponse()
       response.say('I did not hear anything. Please try again.')
       const gather = response.gather({
-        input: 'speech',
+        input: ['speech'],
         action: '/api/twilio/voice/gather',
         method: 'POST',
         speechTimeout: 'auto',
@@ -112,11 +112,13 @@ export async function POST(req: NextRequest) {
 
     // Say the AI response with language support
     // Twilio will use the language attribute for proper pronunciation
-    responseTwiml.say({ voice: 'alice', language: responseLanguage === 'en' ? 'en-US' : responseLanguage }, response)
+    // Map language codes to Twilio-supported formats
+    const twilioLanguage = responseLanguage === 'en' ? 'en-US' : (responseLanguage as any)
+    responseTwiml.say({ voice: 'alice', language: twilioLanguage }, response)
 
     // Continue conversation with another gather
     const gather = responseTwiml.gather({
-      input: 'speech',
+      input: ['speech'],
       action: '/api/twilio/voice/gather',
       method: 'POST',
       speechTimeout: 'auto',

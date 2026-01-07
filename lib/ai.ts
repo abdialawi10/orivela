@@ -147,6 +147,15 @@ export async function generateAIResponse(
     hoursMessage = await translateText(hoursStatus.message, userLanguage)
   }
 
+  // Check for scheduling intent (before building system prompt)
+  const wantsToSchedule = detectSchedulingIntent(userMessage)
+  let schedulingInfo: any = null
+
+  if (wantsToSchedule) {
+    const userTimezone = detectTimezone(userMessage)
+    schedulingInfo = await generateSchedulingResponse(business, userMessage, userTimezone)
+  }
+
   // Build system prompt
   const systemPrompt = `You are ${persona.name}, an AI assistant for ${business.name}. Your voice is ${persona.voice} and your tone is ${persona.tone}.
 
@@ -170,9 +179,9 @@ Instructions:
 5. If you don't know something, ask clarifying questions or suggest they speak with a human representative
 6. Keep responses concise and conversational
 7. If the user wants to schedule an appointment or get pricing, ask qualifying questions to collect relevant details
-${schedulingInfo ? `8. IMPORTANT: The user wants to schedule. Include this information naturally: ${schedulingInfo.message}${schedulingInfo.calendlyLink ? ` Include the Calendly link: ${schedulingInfo.calendlyLink}` : ''}` : ''}
+${schedulingInfo ? `8. IMPORTANT: The user wants to schedule. Include this information naturally: ${schedulingInfo.message}${schedulingInfo.calendlyLink ? ' Include the Calendly link: ' + schedulingInfo.calendlyLink : ''}` : ''}
 
-Important: If the user seems frustrated, angry, wants a refund, cancellation, mentions legal issues, or explicitly asks for a human representative, you should escalate this conversation.`
+Important: If the user seems frustrated, angry, wants a refund, cancellation, mentions legal issues, or explicitly asks for a human representative, you should escalate this conversation.\``
 
   // Build messages for OpenAI
   const chatMessages: OpenAI.Chat.ChatCompletionMessageParam[] = [
@@ -188,15 +197,6 @@ Important: If the user seems frustrated, angry, wants a refund, cancellation, me
 
   // Check for escalation
   const shouldEscalateFlag = shouldEscalate(userMessage)
-
-  // Check for scheduling intent
-  const wantsToSchedule = detectSchedulingIntent(userMessage)
-  let schedulingInfo: any = null
-
-  if (wantsToSchedule) {
-    const userTimezone = detectTimezone(userMessage)
-    schedulingInfo = await generateSchedulingResponse(business, userMessage, userTimezone)
-  }
 
   // Generate predictive suggestions
   const predictiveSuggestion = await generatePredictiveSuggestions(
@@ -260,7 +260,11 @@ Important: If the user seems frustrated, angry, wants a refund, cancellation, me
         sentimentScore: sentimentAnalysis.sentimentScore,
         emotion: sentimentAnalysis.emotion,
       },
-      predictiveSuggestion: predictiveSuggestion || undefined,
+      predictiveSuggestion: predictiveSuggestion ? {
+        type: predictiveSuggestion.type || '',
+        content: predictiveSuggestion.content || '',
+        confidence: predictiveSuggestion.confidence || 0
+      } : undefined,
       webSearchUsed,
     }
   } catch (error) {
