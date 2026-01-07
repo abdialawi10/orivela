@@ -9,13 +9,13 @@ async function main() {
   const hashedPassword = await bcrypt.hash('admin123', 10)
   
   const user = await prisma.user.upsert({
-    where: { email: 'admin@answerai.com' },
+    where: { email: 'admin@orivela.ai' },
     update: {
       password: hashedPassword,
       name: 'Admin User',
     },
     create: {
-      email: 'admin@answerai.com',
+      email: 'admin@orivela.ai',
       password: hashedPassword,
       name: 'Admin User',
     },
@@ -25,7 +25,7 @@ async function main() {
   console.log('Email:', user.email)
   console.log('Password: admin123')
   console.log('\nYou can now login with:')
-  console.log('  Email: admin@answerai.com')
+  console.log('  Email: admin@orivela.ai')
   console.log('  Password: admin123')
 }
 
@@ -37,6 +37,7 @@ main()
   .finally(async () => {
     await prisma.$disconnect()
   })
+
 
 
 

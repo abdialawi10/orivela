@@ -56,6 +56,10 @@ model Business {
   taskWorkspaceId   String?
   autoCreateTasks   Boolean  @default(false)
   
+  // Subscription
+  subscriptionId    String?
+  subscription      Subscription? @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
+  
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
   
@@ -469,5 +473,90 @@ enum SyncStatus {
   SUCCESS
   FAILED
   PENDING
+}
+
+// Pricing & Subscription Models
+
+model Plan {
+  id          String   @id @default(cuid())
+  name        String   @unique // "STARTER", "PROFESSIONAL", "BUSINESS", "ENTERPRISE"
+  displayName String   // "Starter Plan"
+  description String?
+  price       Float    // Monthly price in USD
+  annualPrice Float?   // Annual price (15-20% discount)
+  features    String   // JSON array of features
+  limits      String?  // JSON object with limits (users, etc.)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  subscriptions Subscription[]
+  
+  @@index([name])
+}
+
+model Subscription {
+  id              String   @id @default(cuid())
+  businessId      String   @unique
+  planId          String
+  plan            Plan     @relation(fields: [planId], references: [id])
+  status          SubscriptionStatus @default(TRIAL)
+  billingCycle    BillingCycle @default(MONTHLY)
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+  trialEndsAt     DateTime? // For free trials
+  canceledAt      DateTime?
+  stripeCustomerId String? // Stripe customer ID
+  stripeSubscriptionId String? // Stripe subscription ID
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  business        Business @relation
+  addOns          SubscriptionAddOn[]
+  
+  @@index([businessId])
+  @@index([status])
+}
+
+enum SubscriptionStatus {
+  TRIAL
+  ACTIVE
+  CANCELED
+  PAST_DUE
+  EXPIRED
+}
+
+enum BillingCycle {
+  MONTHLY
+  ANNUAL
+}
+
+model AddOn {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  displayName String
+  description String?
+  price       Float    // Monthly price
+  annualPrice Float?   // Annual price
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  subscriptions SubscriptionAddOn[]
+  
+  @@index([name])
+}
+
+model SubscriptionAddOn {
+  id             String   @id @default(cuid())
+  subscriptionId String
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  addOnId        String
+  addOn          AddOn    @relation(fields: [addOnId], references: [id])
+  quantity       Int      @default(1)
+  createdAt      DateTime @default(now())
+  
+  @@unique([subscriptionId, addOnId])
+  @@index([subscriptionId])
 }
 

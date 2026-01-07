@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Play, Square, Pause, Settings, Mic, MicOff } from 'lucide-react'
+import { copilotName } from '@/lib/brand'
 
 type CopilotMode = 'SALES' | 'SUPPORT' | 'MEETING' | 'AUTO'
 type SuggestionType = 'SUGGESTED_RESPONSE' | 'TALKING_POINT' | 'OBJECTION_DETECTED' | 'CLARIFYING_QUESTION' | 'NEXT_STEP'
@@ -32,9 +33,9 @@ export default function CopilotPage() {
 
   useEffect(() => {
     // Request screen context from extension (if available)
-    if (typeof window !== 'undefined' && (window as any).kotaeCopilot) {
+    if (typeof window !== 'undefined' && (window as any).orivelaCopilot) {
       const updateScreenContext = () => {
-        const context = (window as any).kotaeCopilot.getScreenContext()
+        const context = (window as any).orivelaCopilot.getScreenContext()
         if (context) {
           setScreenContext(context)
         }
@@ -190,7 +191,7 @@ export default function CopilotPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold">Kotae Copilot</h1>
+            <h1 className="text-3xl font-bold">{copilotName}</h1>
             <p className="text-muted-foreground">
               Live AI assistance for calls & meetings
             </p>
@@ -370,5 +371,6 @@ export default function CopilotPage() {
     </DashboardLayout>
   )
 }
+
 
 

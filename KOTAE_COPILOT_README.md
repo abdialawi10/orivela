@@ -250,3 +250,5 @@ Response: { summary: string, actionItems: string[], followUpEmail?: string }
 **Kotae Copilot** - Live AI assistance for calls & meetings
 
 
+
+

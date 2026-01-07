@@ -17,9 +17,10 @@ export interface EmailOptions {
  */
 export async function sendEmail(options: EmailOptions): Promise<boolean> {
   try {
+    const { noreplyEmail } = await import('@/lib/brand')
     const msg = {
       to: options.to,
-      from: options.from || process.env.SENDGRID_FROM_EMAIL || 'noreply@example.com',
+      from: options.from || process.env.SENDGRID_FROM_EMAIL || noreplyEmail,
       subject: options.subject,
       text: options.text,
       html: options.html || options.text,
@@ -32,4 +33,5 @@ export async function sendEmail(options: EmailOptions): Promise<boolean> {
     return false
   }
 }
+
 

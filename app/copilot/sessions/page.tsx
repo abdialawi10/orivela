@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import { Calendar, Clock, MessageSquare } from 'lucide-react'
+import { copilotName } from '@/lib/brand'
 
 export default async function CopilotSessionsPage() {
   const session = await getServerSession()
@@ -58,7 +59,7 @@ export default async function CopilotSessionsPage() {
         <div>
           <h1 className="text-3xl font-bold">Copilot Sessions</h1>
           <p className="text-muted-foreground">
-            View and manage your Kotae Copilot sessions
+            View and manage your {copilotName} sessions
           </p>
         </div>
 
@@ -131,5 +132,6 @@ export default async function CopilotSessionsPage() {
     </DashboardLayout>
   )
 }
+
 
 

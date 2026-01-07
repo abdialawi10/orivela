@@ -10,14 +10,15 @@
 
   // Create widget container
   const widgetContainer = document.createElement('div');
-  widgetContainer.id = 'kotae-ai-widget';
+  widgetContainer.id = 'orivela-ai-widget';
   document.body.appendChild(widgetContainer);
 
   // Load React and widget (simplified - in production, use a CDN or bundle)
   // This is a placeholder - you'd need to bundle the widget properly
-  console.log('KotaeAI Widget loaded', { businessId, apiUrl, primaryColor, position });
+  console.log('Orivela AI Widget loaded', { businessId, apiUrl, primaryColor, position });
   
   // In production, you'd load the actual React component here
   // For now, this is a placeholder that shows the structure
 })();
+
 

@@ -1,4 +1,4 @@
-# AnswerAI
+# Orivela AI
 
 An AI assistant that answers phone calls, SMS texts, and emails for small businesses. Built with Next.js 14, TypeScript, Prisma, OpenAI, Twilio, and SendGrid.
 
@@ -45,7 +45,7 @@ Create a `.env` file in the root directory with the following variables:
 
 ```env
 # Database
-DATABASE_URL="postgresql://user:password@localhost:5432/answerai?schema=public"
+DATABASE_URL="postgresql://user:password@localhost:5432/orivela?schema=public"
 
 # NextAuth
 NEXTAUTH_SECRET="your-secret-key-here-generate-with-openssl-rand-base64-32"
@@ -83,7 +83,7 @@ npm run db:seed
 ```
 
 Default admin credentials:
-- Email: `admin@answerai.com`
+- Email: `admin@orivela.ai`
 - Password: `admin123`
 
 ### 4. Run Development Server
@@ -242,6 +242,7 @@ MIT
 ## Support
 
 For issues and questions, please open an issue on the repository.
+
 
 
 

@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Kotae Copilot",
+  "name": "Orivela Copilot",
   "version": "1.0.0",
   "description": "Live AI assistance for calls & meetings",
   "permissions": [
@@ -36,5 +36,6 @@
     "128": "icon128.png"
   }
 }
+
 
 

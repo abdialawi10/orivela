@@ -1,4 +1,4 @@
-// Kotae Copilot - Content Script
+// Orivela Copilot - Content Script
 // Captures screen context and provides it to the main app
 
 (function() {
@@ -46,8 +46,8 @@
   }
 
   // Expose to window for main app access
-  if (!window.kotaeCopilot) {
-    window.kotaeCopilot = {
+  if (!window.orivelaCopilot) {
+    window.orivelaCopilot = {
       getScreenContext,
       detectApp,
     }
@@ -55,10 +55,10 @@
 
   // Listen for context requests
   window.addEventListener('message', (event) => {
-    if (event.data.type === 'KOTAE_COPILOT_GET_CONTEXT') {
+    if (event.data.type === 'ORIVELA_COPILOT_GET_CONTEXT') {
       window.postMessage(
         {
-          type: 'KOTAE_COPILOT_CONTEXT',
+          type: 'ORIVELA_COPILOT_CONTEXT',
           context: getScreenContext(),
         },
         '*'
@@ -71,5 +71,6 @@
     // Context is generated on-demand, but we can trigger updates here if needed
   }, 5000)
 })()
+
 
 

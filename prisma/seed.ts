@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
+import { initializeDefaultPlans } from '../lib/subscription'
 
 const prisma = new PrismaClient()
 
@@ -8,10 +9,10 @@ async function main() {
   const hashedPassword = await bcrypt.hash('admin123', 10)
   
   const user = await prisma.user.upsert({
-    where: { email: 'admin@answerai.com' },
+    where: { email: 'admin@orivela.ai' },
     update: {},
     create: {
-      email: 'admin@answerai.com',
+      email: 'admin@orivela.ai',
       password: hashedPassword,
       name: 'Admin User',
     },
@@ -36,7 +37,7 @@ async function main() {
         services: JSON.stringify(['Consultation', 'Support', 'Sales']),
         pricingNotes: 'Contact us for detailed pricing information.',
         escalationPhone: '+1234567890',
-        escalationEmail: 'admin@answerai.com',
+        escalationEmail: 'admin@orivela.ai',
         tone: 'friendly, professional, concise',
       },
     })
@@ -66,6 +67,11 @@ async function main() {
     ],
     skipDuplicates: true,
   })
+
+  // Initialize pricing plans
+  console.log('Initializing pricing plans...')
+  await initializeDefaultPlans()
+  console.log('Pricing plans initialized!')
 
   console.log('Seed data created successfully!')
   console.log('Admin user:', user.email)

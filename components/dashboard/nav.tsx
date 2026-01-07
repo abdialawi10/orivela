@@ -11,7 +11,9 @@ import {
   MessageSquare,
   Play,
   LogOut,
+  DollarSign,
 } from 'lucide-react'
+import { brandName } from '@/lib/brand'
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -20,6 +22,7 @@ const navItems = [
   { href: '/knowledge-base', label: 'Knowledge Base', icon: BookOpen },
   { href: '/settings', label: 'Settings', icon: Settings },
   { href: '/playground', label: 'Playground', icon: Play },
+  { href: '/pricing', label: 'Pricing', icon: DollarSign },
 ]
 
 export function DashboardNav() {
@@ -29,7 +32,7 @@ export function DashboardNav() {
     <nav className="flex h-16 items-center border-b bg-white px-6">
       <div className="flex items-center gap-8">
         <Link href="/dashboard" className="text-xl font-bold">
-          AnswerAI
+          {brandName}
         </Link>
         <div className="flex gap-1">
           {navItems.map((item) => {

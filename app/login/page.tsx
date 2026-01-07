@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { brandFullName } from '@/lib/brand'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -44,7 +45,7 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-gray-50">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-2xl">Welcome to AnswerAI</CardTitle>
+          <CardTitle className="text-2xl">Welcome to {brandFullName}</CardTitle>
           <CardDescription>Sign in to your account</CardDescription>
         </CardHeader>
         <CardContent>
@@ -54,7 +55,7 @@ export default function LoginPage() {
               <Input
                 id="email"
                 type="email"
-                placeholder="admin@answerai.com"
+                placeholder="admin@orivela.ai"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -77,13 +78,14 @@ export default function LoginPage() {
             </Button>
           </form>
           <p className="mt-4 text-center text-sm text-gray-500">
-            Default: admin@answerai.com / admin123
+            Default: admin@orivela.ai / admin123
           </p>
         </CardContent>
       </Card>
     </div>
   )
 }
+
 
 
 

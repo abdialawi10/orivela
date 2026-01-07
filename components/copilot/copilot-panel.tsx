@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { X, Lightbulb, MessageSquare, AlertTriangle, HelpCircle, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { copilotName } from '@/lib/brand'
 
 interface Suggestion {
   id: string
@@ -83,7 +84,7 @@ export function CopilotPanel({ sessionId, isVisible, onClose }: CopilotPanelProp
     <div className="fixed right-0 top-0 h-full w-96 bg-white border-l shadow-lg z-50 flex flex-col">
       <div className="p-4 border-b flex items-center justify-between">
         <div>
-          <h3 className="font-semibold">Kotae Copilot</h3>
+          <h3 className="font-semibold">{copilotName}</h3>
           <p className="text-xs text-muted-foreground">Live AI assistance</p>
         </div>
         <Button variant="ghost" size="icon" onClick={onClose}>
@@ -124,5 +125,6 @@ export function CopilotPanel({ sessionId, isVisible, onClose }: CopilotPanelProp
     </div>
   )
 }
+
 
 

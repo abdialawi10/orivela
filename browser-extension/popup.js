@@ -1,4 +1,4 @@
-// Kotae Copilot - Popup Script
+// Orivela Copilot - Popup Script
 
 let isActive = false
 
@@ -15,7 +15,7 @@ document.getElementById('toggleBtn').addEventListener('click', async () => {
     
     // Send message to content script
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      chrome.tabs.sendMessage(tabs[0].id, { type: 'KOTAE_COPILOT_START' })
+      chrome.tabs.sendMessage(tabs[0].id, { type: 'ORIVELA_COPILOT_START' })
     })
   } else {
     // Stop copilot
@@ -25,7 +25,7 @@ document.getElementById('toggleBtn').addEventListener('click', async () => {
     btn.textContent = 'Start Copilot'
     
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      chrome.tabs.sendMessage(tabs[0].id, { type: 'KOTAE_COPILOT_STOP' })
+      chrome.tabs.sendMessage(tabs[0].id, { type: 'ORIVELA_COPILOT_STOP' })
     })
   }
 })
@@ -42,5 +42,6 @@ chrome.storage.local.get(['copilotActive'], (result) => {
     btn.textContent = 'Stop Copilot'
   }
 })
+
 
 

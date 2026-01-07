@@ -2,12 +2,13 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { SessionProvider } from '@/components/providers/session-provider'
+import { brandFullName, defaultMetaDescription } from '@/lib/brand'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'AnswerAI - AI Assistant Dashboard',
-  description: 'AI assistant for phone calls, SMS, and emails',
+  title: `${brandFullName} - AI Assistant Dashboard`,
+  description: defaultMetaDescription,
 }
 
 export default function RootLayout({
@@ -23,6 +24,7 @@ export default function RootLayout({
     </html>
   )
 }
+
 
 
 

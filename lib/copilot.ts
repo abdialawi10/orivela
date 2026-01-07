@@ -50,7 +50,7 @@ export async function generateCopilotSuggestions(
 
   const conversationHistory = context.conversationHistory.slice(-10).join('\n')
 
-  const systemPrompt = `You are Kotae Copilot, a real-time AI assistant helping during live calls and meetings.
+  const systemPrompt = `You are Orivela Copilot, a real-time AI assistant helping during live calls and meetings.
 
 ${modeInstructions}
 

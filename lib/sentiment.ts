@@ -99,3 +99,5 @@ export function getSentimentPriority(sentiment: SentimentAnalysis): number {
   return priorityMap[sentiment.sentiment] || 2
 }
 
+
+
